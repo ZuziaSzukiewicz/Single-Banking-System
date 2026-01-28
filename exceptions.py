@@ -7,3 +7,6 @@ class InsufficientBalance(ValueError):
 
 class InvalidAmount(ValueError):
     pass
+
+class InvalidTransactionType(ValueError):
+    pass
