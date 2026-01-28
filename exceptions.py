@@ -2,9 +2,6 @@
 class InvalidData(ValueError):
     pass
 
-class NegativeBalance(ValueError):
-    pass
-
 class InsufficientBalance(ValueError):
     pass
 

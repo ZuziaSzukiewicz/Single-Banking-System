@@ -1,4 +1,4 @@
-from exceptions import InvalidData, InsufficientBalance, InvalidAmount, NegativeBalance
+from exceptions import InvalidData, InsufficientBalance, InvalidAmount
 
 class Client:
 

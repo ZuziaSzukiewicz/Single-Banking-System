@@ -1,6 +1,6 @@
 import pytest
 from client import Client
-from exceptions import *
+from exceptions import InvalidData, InvalidAmount, InsufficientBalance
 
 @pytest.mark.parametrize("id", [0, -1, -1100000, "smith", None, [123], {"id": 123}])
 def test__wrong_data_in_constuctor_id(id):
@@ -51,31 +51,39 @@ def test_repr():
     assert repr(client) == "Client(id=12, name='Karol', surname='Nowak', balance=0)"
 
 @pytest.mark.parametrize("amount", [0, -12, "smith", None, [123], {"id": 123}])
-def test_wrong_data_withdrawl(amount):
+def test_invalid_amount_withdraw(amount):
      with pytest.raises(InvalidAmount):
         client = Client(12, "Karol", "Nowak", 0)
         Client.withdraw(client, amount)
 
-#po dodaniu tego liczba testów sie zmniejszyla a nie zwiększyła
 @pytest.mark.parametrize("amount", [15, 130, 40, 50])
-def test_wrong_data_withdrawl(amount):
+def test_insufficient_balance_withdraw(amount):
      with pytest.raises(InsufficientBalance):
         client = Client(12, "Karol", "Nowak", 0)
         Client.withdraw(client, amount)
 
-#te normalnie się dodała ilość
 @pytest.mark.parametrize("amount", [1232, 12, 1])
 def test__correct_data_withdrawl(amount):
         client = Client(1234, "Karl", "Smith", 50000)
         Client.withdraw(client, amount)
 
+@pytest.mark.parametrize("amount", [1232, 12, 1, 50000])
+def test__correct_withdrawl_effect(amount):
+        client = Client(1234, "Karl", "Smith", 50000)
+        assert client.withdraw(amount) == (50000 - amount)
+
 @pytest.mark.parametrize("amount", [0, -12, "smith", None, [123], {"id": 123}])
 def test_wrong_data_deposit(amount):
      with pytest.raises(InvalidAmount):
         client = Client(12, "Karol", "Nowak", 0)
-        Client.withdraw(client, amount)
+        Client.deposit(client, amount)
 
 @pytest.mark.parametrize("amount", [1232, 12, 1])
 def test__correct_data_deposit(amount):
         client = Client(1234, "Karl", "Smith", 50000)
-        Client.withdraw(client, amount)
+        Client.deposit(client, amount)
+
+@pytest.mark.parametrize("amount", [1232, 12, 1])
+def test__correct_deposit_effect(amount):
+        client = Client(1234, "Karl", "Smith", 50000)
+        assert client.deposit(amount) == (50000 + amount)
