@@ -11,7 +11,7 @@ class Client(Base):
     surname = Column(String, nullable=False)
     balance = Column(Integer, nullable=False)
 
-    transactions = relationship("Transaction", back_populates="client")
+    transactions = relationship("Transaction", back_populates="client", cascade="all, delete-orphan")
 
 class Transaction(Base):
     __tablename__ = "transactions"

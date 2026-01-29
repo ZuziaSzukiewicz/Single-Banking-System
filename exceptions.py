@@ -10,3 +10,6 @@ class InvalidAmount(ValueError):
 
 class InvalidTransactionType(ValueError):
     pass
+
+class ClientNotFound(LookupError):
+    pass

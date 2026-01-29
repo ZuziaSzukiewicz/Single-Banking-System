@@ -1,5 +1,5 @@
 from database import Client
-from exceptions import InvalidData
+from exceptions import InvalidData, ClientNotFound
 
 def get_next_client_id(db):
     ids = db.query(Client.client_id).order_by(Client.client_id).all()
@@ -24,3 +24,13 @@ def create_client(db, name, surname, balance):
     db.commit()
     db.refresh(client)
     return client
+
+def delete_client(db, client_id):
+    if type(client_id) is not int or client_id <= 0:
+        raise InvalidData("ID must be provided and be more than zero.")
+    client = db.query(Client).filter_by(client_id=client_id).one_or_none()
+    if client is None:
+        raise ClientNotFound("Client was not found in the database")
+    db.delete(client)
+    db.commit()
+    return client_id
