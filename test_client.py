@@ -87,3 +87,25 @@ def test__correct_data_deposit(amount):
 def test__correct_deposit_effect(amount):
         client = Client(1234, "Karl", "Smith", 50000)
         assert client.deposit(amount) == (50000 + amount)
+
+def test__correct_transaction_history_display():
+    client = Client(1234, "Karl", "Smith", 50000)
+    client.withdraw(599)
+    client.deposit(150)
+    client.withdraw(12222)
+
+    statement = client.get_statement()
+
+    assert len(statement) == 3
+
+    assert "id number: 1234" in statement[0]
+    assert "withdraw" in statement[0]
+    assert "amount 599" in statement[0]
+
+    assert "id number: 1234" in statement[1]
+    assert "deposit" in statement[1]
+    assert "amount 150" in statement[1]
+
+    assert "id number: 1234" in statement[2]
+    assert "withdraw" in statement[2]
+    assert "amount 12222" in statement[2]

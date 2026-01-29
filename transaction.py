@@ -1,5 +1,5 @@
 from exceptions import InvalidTransactionType, InvalidAmount
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Transaction:
     def __init__(self, client_id, transaction_type, amount):
@@ -10,10 +10,10 @@ class Transaction:
         self.client_id = client_id
         self.transaction_type = transaction_type
         self.amount = amount
-        self.date = datetime.utcnow()
+        self.date = datetime.now(timezone.utc)
 
     def __str__(self):
         return f'Client identified with an id number: {self.client_id} performs a {self.transaction_type} with an amount {self.amount} at {self.date.strftime("%Y-%m-%d %H:%M:%S")}'
     
     def __repr__(self):
-        return f"Transaction(client_id={self.client_id}, '  '={self.transaction_type}, amount={self.amount}, date={self.date})"
+        return f"Transaction(client_id={self.client_id}, 'transaction_type='{self.transaction_type}', amount={self.amount}, date={self.date})"

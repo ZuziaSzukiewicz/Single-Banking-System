@@ -1,5 +1,6 @@
 from exceptions import InvalidData, InsufficientBalance, InvalidAmount
 from transaction import Transaction
+
 class Client:
 
     def __init__(self, id, name, surname, balance):
