@@ -3,8 +3,8 @@ import pytest
 from database import Base, Client
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from client_service import create_client, get_next_client_id, delete_client
-from exceptions import InvalidData, ClientNotFound
+from client_service import create_client, get_next_client_id, delete_client, deposit, withdraw
+from exceptions import InvalidData, ClientNotFound, InvalidAmount
 
 TEST_DB_URL = "sqlite:///test_database.db"
 
@@ -77,15 +77,57 @@ def test_create_client_invalid_surname(db, surname):
         create_client(db, "Karol", surname, 1000)
 
 @pytest.mark.parametrize("balance", [-1, -100, None, "100", 12.5, [], {}])
-def test_create_client_invalid_balance_raises(db, balance):
+def test_create_client_invalid_balance(db, balance):
     with pytest.raises(InvalidData):
         create_client(db, "Karol", "Nowak", balance)
 
 @pytest.mark.parametrize("id", [0, -1, None, "1", 1.5, [], {}])
-def test_delete_client_invalid_id_raises(db, id):
+def test_delete_client_invalid_id(db, id):
     with pytest.raises(InvalidData):
         delete_client(db, id)
 
-def test_delete_client_not_found_raises(db):
+def test_delete_client_not_found(db):
     with pytest.raises(ClientNotFound):
         delete_client(db, 999)
+
+@pytest.mark.parametrize("id", [0, -1, None, "1", 1.5, [], {}])
+def test_deposit_invalid_id(db, id):
+    with pytest.raises(InvalidData):
+        deposit(db, id, amount=50)
+
+@pytest.mark.parametrize("amount", [0, -1, -100, None, "100", 12.5, [], {}])
+def test_deposit_invalid_amount(db, amount):
+    with pytest.raises(InvalidAmount):
+        client1 = create_client(db, "Karol", "Nowak", 1000)
+        deposit(db, client1.client_id, amount)
+
+def test_deposit_client_not_found(db):
+    with pytest.raises(ClientNotFound):
+        deposit(db, 999, 1500)
+
+@pytest.mark.parametrize("amount", [50, 60, 70, 2837, 6983])
+def test_deposit_correct_balance(db, amount):
+    client1 = create_client(db, "Karol", "Nowak", 10000) 
+    deposited = deposit(db, client1.client_id, amount) 
+    assert deposited == client1.balance
+
+@pytest.mark.parametrize("id", [0, -1, None, "1", 1.5, [], {}])
+def test_withdraw_invalid_id(db, id):
+    with pytest.raises(InvalidData):
+        withdraw(db, id, amount=50)
+
+@pytest.mark.parametrize("amount", [0, -1, -100, None, "100", 12.5, [], {}])
+def test_withdraw_invalid_amount(db, amount):
+    with pytest.raises(InvalidAmount):
+        client1 = create_client(db, "Karol", "Nowak", 1000)
+        withdraw(db, client1.client_id, amount)
+
+def test_withdraw_client_not_found(db):
+    with pytest.raises(ClientNotFound):
+        withdraw(db, 999, 1500)
+
+@pytest.mark.parametrize("amount", [50, 60, 70, 2837, 6983])
+def test_withdraw_correct_balance(db, amount):
+    client1 = create_client(db, "Karol", "Nowak", 10000) 
+    withdrawed = withdraw(db, client1.client_id, amount)
+    assert withdrawed == client1.balance

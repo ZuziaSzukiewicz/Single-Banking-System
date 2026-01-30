@@ -35,6 +35,8 @@ def delete_client(db, client_id):
     db.commit()
     return client_id
 
+#Zastanowić się nad zmapowaniem tych operacji z domeną
+
 def deposit(db, client_id, amount):
     if type(client_id) is not int or client_id <= 0:
         raise InvalidData("ID must be provided and be more than zero.")
@@ -46,19 +48,19 @@ def deposit(db, client_id, amount):
     client.balance += amount
     db.commit()
     db.refresh(client)
-    return client
+    return client.balance
 
-def withdraw(db, client_id, amount, balance):
+def withdraw(db, client_id, amount):
     if type(client_id) is not int or client_id <= 0:
         raise InvalidData("ID must be provided and be more than zero.")
     if type(amount) is not int or amount <= 0:
         raise InvalidAmount("Amount for withdraw must be greater than zero.")
-    if balance - amount < 0:
-        raise InsufficientBalance("You cannot withdraw money, your balance is not high enough.")
-    client = db.query(Client).filter(client_id=client_id).one_or_none()
+    client = db.query(Client).filter_by(client_id=client_id).one_or_none()
     if client is None:
-        raise ClientNotFound("Client was not found in the database")
+        raise ClientNotFound("Client was not found in the database")   
+    if client.balance - amount < 0:
+        raise InsufficientBalance("You cannot withdraw money, your balance is not high enough.")
     client.balance -= amount
     db.commit()
     db.refresh(client)
-    return client 
+    return client.balance
