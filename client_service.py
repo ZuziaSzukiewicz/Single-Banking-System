@@ -35,7 +35,6 @@ def delete_client(db, client_id):
     db.commit()
     return client_id
 
-#Zastanowić się nad zmapowaniem tych operacji z domeną
 
 def deposit(db, client_id, amount):
     if type(client_id) is not int or client_id <= 0:
@@ -46,6 +45,8 @@ def deposit(db, client_id, amount):
     if client is None:
         raise ClientNotFound("Client was not found in the database")
     client.balance += amount
+    transaction = Transaction(client_id=client_id, transaction_type="deposit", amount=amount)
+    db.add(transaction)
     db.commit()
     db.refresh(client)
     return client.balance
@@ -61,8 +62,31 @@ def withdraw(db, client_id, amount):
     if client.balance - amount < 0:
         raise InsufficientBalance("You cannot withdraw money, your balance is not high enough.")
     client.balance -= amount
+    transaction = Transaction(client_id=client_id, transaction_type="withdraw", amount=amount)
+    db.add(transaction)
     db.commit()
     db.refresh(client)
     return client.balance
 
-#brakuje serwisu get statement który wpisuje i zarząca transakacjami 
+def get_client(db, client_id):
+    if type(client_id) is not int or client_id <= 0:
+        raise InvalidData("ID must be provided and be more than zero.")
+    client = db.query(Client).filter_by(client_id=client_id).one_or_none()
+    if client is None:
+        raise ClientNotFound("Client was not found in the database")
+    return client
+
+def get_statement(db, client_id):
+    if type(client_id) is not int or client_id <= 0:
+        raise InvalidData("ID must be provided and be more than zero.")
+    client = db.query(Client).filter_by(client_id=client_id).one_or_none()
+    if client is None:
+        raise ClientNotFound("Client was not found in the database")
+    transactions = (db.query(Transaction).filter_by(client_id=client_id).order_by(Transaction.date, Transaction.id).all())
+    return transactions
+
+def list_clients(db):
+    return (db.query(Client).order_by(Client.client_id).all())
+
+def list_balances(db):
+    return (db.query(Client).order_by(Client.client_id).all())
