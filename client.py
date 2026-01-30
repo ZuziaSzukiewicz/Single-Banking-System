@@ -30,7 +30,7 @@ class Client:
 
     def withdraw(self, amount):
         if type(amount) is not int or amount <= 0:
-            raise InvalidAmount("Amount for withdraw must be greater then zero.")
+            raise InvalidAmount("Amount for withdraw must be greater than zero.")
         if self.balance - amount < 0:
             raise InsufficientBalance("You cannot withdraw money, your balance is not high enough.")
         self._balance -= amount

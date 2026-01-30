@@ -1,5 +1,5 @@
 from database import Client
-from exceptions import InvalidData, ClientNotFound
+from exceptions import InvalidData, ClientNotFound, InvalidAmount, InsufficientBalance
 
 def get_next_client_id(db):
     ids = db.query(Client.client_id).order_by(Client.client_id).all()
@@ -34,3 +34,31 @@ def delete_client(db, client_id):
     db.delete(client)
     db.commit()
     return client_id
+
+def deposit(db, client_id, amount):
+    if type(client_id) is not int or client_id <= 0:
+        raise InvalidData("ID must be provided and be more than zero.")
+    if type(amount) is not int or amount <= 0:
+        raise InvalidAmount("Amount for deposit must be greater than zero.")
+    client = db.query(Client).filter_by(client_id=client_id).one_or_none()
+    if client is None:
+        raise ClientNotFound("Client was not found in the database")
+    client.balance += amount
+    db.commit()
+    db.refresh(client)
+    return client
+
+def withdraw(db, client_id, amount, balance):
+    if type(client_id) is not int or client_id <= 0:
+        raise InvalidData("ID must be provided and be more than zero.")
+    if type(amount) is not int or amount <= 0:
+        raise InvalidAmount("Amount for withdraw must be greater than zero.")
+    if balance - amount < 0:
+        raise InsufficientBalance("You cannot withdraw money, your balance is not high enough.")
+    client = db.query(Client).filter(client_id=client_id).one_or_none()
+    if client is None:
+        raise ClientNotFound("Client was not found in the database")
+    client.balance -= amount
+    db.commit()
+    db.refresh(client)
+    return client 
