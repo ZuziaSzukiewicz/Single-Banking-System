@@ -1,4 +1,4 @@
-from database import Client
+from database import Client, Transaction
 from exceptions import InvalidData, ClientNotFound, InvalidAmount, InsufficientBalance
 
 def get_next_client_id(db):
@@ -64,3 +64,5 @@ def withdraw(db, client_id, amount):
     db.commit()
     db.refresh(client)
     return client.balance
+
+#brakuje serwisu get statement który wpisuje i zarząca transakacjami 

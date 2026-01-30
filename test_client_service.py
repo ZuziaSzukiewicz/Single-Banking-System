@@ -4,10 +4,9 @@ from database import Base, Client
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from client_service import create_client, get_next_client_id, delete_client, deposit, withdraw
-from exceptions import InvalidData, ClientNotFound, InvalidAmount
+from exceptions import InvalidData, ClientNotFound, InvalidAmount, InsufficientBalance
 
 TEST_DB_URL = "sqlite:///test_database.db"
-
 
 @pytest.fixture
 def db():
@@ -126,6 +125,12 @@ def test_withdraw_client_not_found(db):
     with pytest.raises(ClientNotFound):
         withdraw(db, 999, 1500)
 
+@pytest.mark.parametrize("amount", [50, 60, 150, 90])
+def test_withdraw_insufficienet_balance(db, amount):
+    with pytest.raises(InsufficientBalance):
+        client1 = create_client(db, "Karol", "Nowak", 10)
+        withdraw(db, client1.client_id, amount)
+        
 @pytest.mark.parametrize("amount", [50, 60, 70, 2837, 6983])
 def test_withdraw_correct_balance(db, amount):
     client1 = create_client(db, "Karol", "Nowak", 10000) 
