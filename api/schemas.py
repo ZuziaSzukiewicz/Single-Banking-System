@@ -1,28 +1,28 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, StrictStr, StrictInt
 from datetime import datetime
 
 class CreateClient(BaseModel):
-    name: str
-    surname: str
-    balance: int
+    name: StrictStr
+    surname: StrictStr
+    balance: StrictInt
 
 class ClientOut(BaseModel):
-    client_id: int
-    name: str
-    surname: str
-    balance: int
+    client_id: StrictInt
+    name: StrictStr
+    surname: StrictStr
+    balance: StrictInt
 
     class Config:
         from_attributes = True
 
 class AmountIn(BaseModel):
-    amount: int
+    amount: StrictInt
 
 class TransactionOut(BaseModel):
-    id: int
-    client_id: int
-    transaction_type: str
-    amount: int
+    id: StrictInt
+    client_id: StrictInt
+    transaction_type: StrictStr
+    amount: StrictInt
     date: datetime
 
     class Config:

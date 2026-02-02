@@ -6,7 +6,6 @@ from api.schemas import CreateClient, ClientOut, AmountIn, TransactionOut
 from sqlalchemy.orm import Session
 from exceptions import InvalidData, InvalidAmount, InsufficientBalance, ClientNotFound
 
-
 app = FastAPI()
 
 @app.on_event("startup")
