@@ -18,9 +18,12 @@ def db():
 
     Session = sessionmaker(bind=engine)
     session = Session()
-
-    yield session
-    session.close()
+    
+    try:
+        yield session
+    finally:
+        session.close()
+        engine.dispose()
 
 def test_create_first_client(db):
     client = create_client(db, "Karol", "Nowak", 1000)

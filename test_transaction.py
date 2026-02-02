@@ -1,7 +1,6 @@
 import pytest
 from transaction import Transaction
 from exceptions import InvalidTransactionType, InvalidAmount
-from datetime import datetime, timezone
 
 @pytest.mark.parametrize("transaction_type", ["get", "pay", "outdraw", " ", "", None, [1,2,3], 1223])
 def test_wrong_transaction_type(transaction_type):
