@@ -68,7 +68,7 @@ else:
     client_id = options[choice_label]
 
     amount = st.number_input("Amount", min_value=1, step=1)
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         if st.button("Deposit"):
@@ -87,6 +87,16 @@ else:
                 st.rerun()
             else:
                 st.error(f"Error: {resp.status_code} - {resp.text}")
+    with col3:
+        if st.button("Delete client", type="secondary"):
+            resp = requests.delete(f"{API}/clients/{client_id}")
+
+            if resp.status_code == 200:
+                st.success(f"Client {client_id} has been deleted")
+                st.rerun()
+            else:
+                st.error(f"Error: {resp.status_code} - {resp.text}")
+        
 
 st.header("Transaction history")
 
@@ -97,3 +107,6 @@ if clients:
         st.dataframe(i, use_container_width=True)
     else:
         st.error(f"Error: {response.status_code} - {response.text}")
+
+
+# jutro mogę dodać delete client do ui i sprawdzić api dokładnie
