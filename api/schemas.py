@@ -25,5 +25,5 @@ class TransactionOut(BaseModel):
     amount: int
     date: datetime
 
-    class Cofig:
+    class Config:
         from_attributes = True
