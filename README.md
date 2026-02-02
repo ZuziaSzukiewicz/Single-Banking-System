@@ -74,3 +74,18 @@ Code Quality & Structure
 Testing & Validation
 
   ✅ Unit tests should be written using pytest to ensure correct functionality.
+
+
+To run programe:
+
+0. Clone repository localy.
+
+1. Activate virtual environment
+
+2. Install dependencies form requirements.txt
+
+3. In terminal run command: uvicorn api.main:app --reload
+
+4. Open second terminal and run: streamlit run ui/app.py
+
+5. Go to the link provided by terminal.
