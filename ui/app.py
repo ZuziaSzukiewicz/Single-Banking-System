@@ -107,6 +107,3 @@ if clients:
         st.dataframe(i, use_container_width=True)
     else:
         st.error(f"Error: {response.status_code} - {response.text}")
-
-
-# jutro mogę dodać delete client do ui i sprawdzić api dokładnie
